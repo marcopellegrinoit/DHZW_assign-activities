@@ -31,13 +31,6 @@ df_ODiN$age_group[df_ODiN$age %in% 40:49] =  "age_40_49"
 df_ODiN$age_group[df_ODiN$age %in% 50:69] = "age_50_69"
 df_ODiN$age_group[df_ODiN$age >= 70] = "age_over_70"
 
-################################################################################
-# How many agents are new
-print(paste0('There are ',
-             nrow(df_ODiN[df_ODiN$agent_new=='yes',]),
-             ' agents that are new, which is the ',
-             (nrow(df_ODiN[df_ODiN$agent_new=='yes',])/nrow(df_ODiN)),
-             '% of the total'))
 
 ################################################################################
 # Plot combinations of attributes that are not in ODiN

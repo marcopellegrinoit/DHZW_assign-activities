@@ -5,8 +5,7 @@ select_attributes_ODiN <- function (df) {
     tibble()    # without this, results will be cast as a list
 
   df <- df %>%
-    select(OP,
-           OPID,
+    select(OPID,
            HHPers,
            HHPlOP,
            WoPC,
@@ -31,7 +30,9 @@ select_attributes_ODiN <- function (df) {
            AantOVVpl,
            
            VerplID,
+           VerplNr,
            Doel,
+           MotiefV,
            VertLoc,
            VertPC,
            AankPC,
@@ -57,8 +58,7 @@ select_attributes_ODiN <- function (df) {
            
            FactorP
     ) %>%
-    rename(agent_new = OP,
-           agent_ID = OPID,
+    rename(agent_ID = OPID,
            hh_size = HHPers,
            hh_position = HHPlOP,
            hh_PC4 = WoPC,
@@ -83,7 +83,9 @@ select_attributes_ODiN <- function (df) {
            freq_trips_public_transp = AantOVVpl,
            
            disp_id = VerplID,
-           disp_reason = Doel,
+           disp_counter = VerplNr,
+           disp_destination = Doel,
+           disp_motive = MotiefV,
            disp_start_home = VertLoc,
            disp_start_PC4 = VertPC,
            disp_arrival_PC4 = AankPC,
@@ -121,8 +123,7 @@ select_attributes_OViN <- function (df) {
     tibble()    # without this, results will be cast as a list
   
   df <- df %>%
-    select(OP,
-           OPID,
+    select(OPID,
            HHPers,
            HHPlOP,
            Wogem,
@@ -141,6 +142,7 @@ select_attributes_OViN <- function (df) {
            VerplID,
            VerplNr,
            Doel,
+           MotiefV,
            Vertrekp,
            VertPC,
            AankPC,
@@ -166,8 +168,7 @@ select_attributes_OViN <- function (df) {
            
            FactorP
     ) %>%
-    rename(agent_new = OP,
-           agent_ID = OPID,
+    rename(agent_ID = OPID,
            hh_size = HHPers,
            hh_position = HHPlOP,
            hh_municipality = Wogem,
@@ -185,7 +186,8 @@ select_attributes_OViN <- function (df) {
            
            disp_id = VerplID,
            disp_counter = VerplNr,
-           disp_reason = Doel,
+           disp_destination = Doel,
+           disp_motive = MotiefV,
            disp_start_home = Vertrekp,
            disp_start_PC4 = VertPC,
            disp_arrival_PC4 = AankPC,
@@ -221,8 +223,7 @@ select_attributes_OViN_2014 <- function (df) {
     tibble()    # without this, results will be cast as a list
   
   df <- df %>%
-    select(OP,
-           OPID,
+    select(OPID,
            HHPers,
            HHPlOP,
            Wogem,
@@ -241,6 +242,7 @@ select_attributes_OViN_2014 <- function (df) {
            VerplID,
            VerplNr,
            Doel,
+           MotiefV,
            Vertrekp,
            VertPC,
            AankPC,
@@ -264,8 +266,7 @@ select_attributes_OViN_2014 <- function (df) {
            
            FactorP
     ) %>%
-    rename(agent_new = OP,
-           agent_ID = OPID,
+    rename(agent_ID = OPID,
            hh_size = HHPers,
            hh_position = HHPlOP,
            hh_municipality = Wogem,
@@ -283,7 +284,8 @@ select_attributes_OViN_2014 <- function (df) {
            
            disp_id = VerplID,
            disp_counter = VerplNr,
-           disp_reason = Doel,
+           disp_destination = Doel,
+           disp_motive = MotiefV,
            disp_start_home = Vertrekp,
            disp_start_PC4 = VertPC,
            disp_arrival_PC4 = AankPC,
@@ -328,9 +330,6 @@ filter_hh_municipality <- function(df, municipality_code) {
 
 # Use the PC4 of the first day displacement (from home) as home address
 home_municipality_to_PC4 <- function(df, df_PC4) {
-  # filter agents in OViN that only start the day from home
-  df <- filter_start_day_from_home(df)
-  
   # find the starting point of the first move, and set it as home
   df$hh_PC4=NA
   df[df$disp_counter==1,]$hh_PC4 = as.character(df[df$disp_counter==1,]$disp_start_PC4)
@@ -347,6 +346,13 @@ home_municipality_to_PC4 <- function(df, df_PC4) {
 
 # Filter agents that only start the day from home
 filter_start_day_from_home <- function (df) {
+  agents_home <- df %>% 
+    group_by(agent_ID) %>% 
+    filter(any(disp_start_home==1 &
+                 disp_counter==1))
+  df <- filter(df, (agent_ID %in% unique(agents_home$agent_ID)))
+  
+  
   # Filter agents starting the day from home
   df <- df[df$disp_start_home==1,]
   
@@ -516,9 +522,6 @@ format_role_OViN <- function (df){
 
 # Format the values of all the attributes in common between ODiN and OViN
 format_values <- function(df) {
-  df$agent_new <- recode(df$agent_new,
-                      '0' =	'no',
-                      '1' =	'yes')
   
   df$hh_position <- recode(df$hh_position,
                            '1' = 'single household',
@@ -546,7 +549,7 @@ format_values <- function(df) {
                                    '1' =	'yes',
                                    '3' =	'unknown')
   
-  df$disp_reason <- recode(df$disp_reason,
+  df$disp_destination <- recode(df$disp_destination,
                            '1' = 'to home',
                            '2' = 'to work',
                            '3' = 'business visit',
@@ -561,7 +564,23 @@ format_values <- function(df) {
                            '12' =	'other leisure activities',
                            '13' =	'services/personal care',
                            '14' =	'other')
-  df[is.na(df$disp_reason) & is.na(df$disp_id),]$disp_reason <- 'No move'
+  df[is.na(df$disp_destination) & is.na(df$disp_id),]$disp_destination <- 'No move'
+  
+  df$disp_motive <- recode(df$disp_motive,
+                           '1' = 'to and from work',
+                           '2' = 'business visit',
+                           '3' = 'professional',
+                           '4' = 'pick up / bring people',
+                           '5' = 'collection/delivery of goods',
+                           '6' = 'follow education',
+                           '7' = 'shopping',
+                           '8' = 'visit/stay',
+                           '9' =	'hiking',
+                           '10' =	'sports/hobby',
+                           '11' =	'other leisure activities',
+                           '12' =	'services/personal care',
+                           '13' =	'other')
+  df[is.na(df$disp_motive) & is.na(df$disp_id),]$disp_motive <- 'No move'
   
   return(df)
 }
