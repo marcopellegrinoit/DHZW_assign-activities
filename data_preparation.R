@@ -5,16 +5,16 @@ library(tidyr)
 library(readr)
 library("this.path")
 setwd(this.path::this.dir())
-source('utils.R')
+source('src/utils.R')
 
 # load DHZW area
-setwd(paste0(this.path::this.dir(), "/data"))
+setwd(paste0(this.path::this.dir(), "/data/codes"))
 DHZW_neighborhood_codes <- read.csv("DHZW_neighbourhoods_codes.csv", sep = ";" ,header=F)$V1
 DHZW_PC4_codes <- read.csv("DHZW_PC4_codes.csv", sep = ";" ,header=F)$V1
 municipality_code = 518
 
 # Load ODiNs and OViNs
-setwd(paste0(this.path::this.dir(), "/data/CBS"))
+setwd(paste0(this.path::this.dir(), "/data/OViN and OViN"))
 
 OViN2010 <- read_sav("OViN2010.sav")
 OViN2011 <- read_sav("OViN2011.sav")
@@ -129,7 +129,7 @@ print(paste0('N agents in total: ', length(unique(OViN2014$agent_ID))+
 df <- bind_rows(OViN, ODiN)
 
 # Save dataset
-setwd(paste0(this.path::this.dir(), "/data/Formatted"))
+setwd(paste0(this.path::this.dir(), "/data/processed"))
 write.csv(df, 'df_DHZW.csv', row.names=FALSE)
 
 ################################################################################

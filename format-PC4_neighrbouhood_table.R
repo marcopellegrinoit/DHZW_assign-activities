@@ -5,12 +5,12 @@ setwd(this.path::this.dir())
 
 municipality_code = 518 # municipality code of The Hague
 
-setwd(paste0(this.path::this.dir(), "/data"))
+setwd(paste0(this.path::this.dir(), "/data/codes"))
 DHZW_neighborhood_codes <- read.csv("DHZW_neighbourhoods_codes.csv", sep = ";" ,header=F)$V1
 DHZW_PC4_codes <- read.csv("DHZW_PC4_codes.csv", sep = ";" ,header=F)$V1
 
 # https://www.cbs.nl/nl-nl/maatwerk/2019/42/buurt-wijk-en-gemeente-2019-voor-postcode-huisnummer
-df_PC6_neighb <- read_delim("CBS PC neighbourhoods/PC6_neighbourhoods_2019.csv", 
+df_PC6_neighb <- read_delim("processed/PC6_neighbourhoods_2019.csv", 
                             delim = ";", escape_double = FALSE, trim_ws = TRUE)
 
 df_PC6_neighb <- df_PC6_neighb %>%
@@ -20,12 +20,12 @@ df_PC6_neighb <- df_PC6_neighb %>%
 
 df_PC6_neighb$neighb_code <- paste0('BU0', df_PC6_neighb$neighb_code)
 
-setwd(paste0(this.path::this.dir(), "/data/CBS PC neighbourhoods"))
+setwd(paste0(this.path::this.dir(), "/data/processed"))
 write.csv(df_PC6_neighb, 'PC6_neighb.csv', row.names = FALSE)
 
 ###############################################################################
 
-setwd(paste0(this.path::this.dir(), "/data/CBS PC neighbourhoods"))
+setwd(paste0(this.path::this.dir(), "/data/processed"))
 df_PC6_neighb <- read_csv("PC6_neighb.csv")
 
 df_PC6_neighb$PC4 = gsub('.{2}$', '', df_PC6_neighb$PC6)
@@ -39,5 +39,5 @@ df_PC6_neighb <- df_PC6_neighb %>%
   summarise(freq = n()) %>%
   mutate(prop = freq / sum(freq))
 
-setwd(paste0(this.path::this.dir(), "/data/CBS PC neighbourhoods"))
+setwd(paste0(this.path::this.dir(), "/data/processed"))
 write.csv(df_PC6_neighb, 'PC4_neighb.csv', row.names = FALSE)

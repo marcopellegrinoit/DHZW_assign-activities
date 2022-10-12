@@ -5,15 +5,17 @@ library('ggplot2')
 library("this.path")
 library('ggmap')
 library(readr)
-setwd(this.path::this.dir())
 
 ################################################################################
 # Focus datasets on DHZW and save them
 
 # load DHZW area PC4
-DHZW_PC4_codes <- read.csv("~/DHZW_synthetic-population/ODiN/data/DHZW_PC4_codes.csv", sep = ";" ,header=F)$V1
+setwd(this.path::this.dir())
+setwd('../data/codes')
+DHZW_PC4_codes <- read.csv("DHZW_PC4_codes.csv", sep = ";" ,header=F)$V1
 
-setwd('~/DHZW_synthetic-population/ODiN/data/map')
+setwd(this.path::this.dir())
+setwd('../data/map')
 shp_nl_PC4 <- st_read('CBS-PC4-2019-v2')
 shp_nl_PC4 <- shp_nl_PC4 %>%
   select(PC4, geometry)
@@ -23,8 +25,11 @@ shp_DHZW_PC4 = shp_nl_PC4[shp_nl_PC4$PC4 %in% DHZW_PC4_codes,]
 st_write(shp_DHZW_PC4, 'DHZW_PC4_shapefiles', driver = "ESRI Shapefile")
 
 # load DHZW area neighrbouhoods
-DHZW_neighborhood_codes <- read.csv("~/DHZW_synthetic-population/ODiN/data/DHZW_neighbourhoods_codes.csv", sep = ";" ,header=F)$V1
+setwd('../data/codes')
+DHZW_neighborhood_codes <- read.csv("DHZW_neighbourhoods_codes.csv", sep = ";" ,header=F)$V1
 
+setwd(this.path::this.dir())
+setwd('../data/map')
 shp_nl_neighbs <- st_read('WijkBuurtkaart_2019_v3')
 shp_nl_neighbs <- shp_nl_neighbs %>%
   select(BU_CODE, geometry)
@@ -35,11 +40,12 @@ st_write(shp_DHZW_neighbs, 'DHZW_neighbs_shapefiles', driver = "ESRI Shapefile")
 
 ################################################################################
 # Plot PC4 and neighbourhood areas together to see the overlap
-setwd('~/DHZW_synthetic-population/ODiN/data/map')
+setwd(this.path::this.dir())
+setwd('../data/map')
 shp_DHZW_neighbs <- st_read('DHZW_neighbs_shapefiles')
 shp_DHZW_PC4 <- st_read('DHZW_PC4_shapefiles')
 
-plot(shp_DHZW_PC4)
+plot(shp_DHZW_neighbs)
 
 colors <- c("Neighbourhood" = "blue", "PC4" = "red")
 ggplot()+

@@ -1,6 +1,7 @@
 library(dplyr)
 library(readr)
 
+setwd('/data/processed')
 df_ODiN <- read_csv("df_DHZW.csv")
 
 ################################################################################
@@ -40,7 +41,6 @@ df_ODiN_agents <- df_ODiN_agents %>%
   mutate(freq_same_prototype = n())
 
 # Save dataset that links agents to prototypes
-setwd(paste0(this.path::this.dir(), "/data/Formatted"))
 write.csv(df_ODiN_agents, 'df_ODiN_prototypes.csv', row.names = FALSE)
 
 ################################################################################
@@ -64,7 +64,7 @@ df_prototypes <- df_ODiN_agents %>%
   select(prototype_ID, agegroup, gender, migration_background, freq_same_prototype) %>%
   distinct()
 
-df_synth_pop <- read_csv("~/GitHub projects/DHZW_assign-travel-behaviours/data/synthetic_population_DHZW_2019_with_hh.csv")
+df_synth_pop <- read_csv("../synthetic_population_DHZW_2019_with_hh.csv")
 df_synth_pop <- create_agegroups(df_synth_pop)
 
 df_synth_pop_unique <- df_synth_pop %>%
@@ -76,16 +76,18 @@ df_match <- left_join(df_synth_pop_unique, df_prototypes, by=c('agegroup', 'gend
 ################################################################################
 
 df_motive_probabilities <- data.frame(matrix(ncol = 3, nrow = 0))
-colnames(df_motive_probabilities) <- c("disp_motive", "n", "prob", "prototype_ID")
+colnames(df_motive_probabilities) <- c("disp_destination", "n", "prob", "prototype_ID")
+
+df_ODiN <- df_ODiN[df_ODiN$disp_destination!='to home',]
 
 for (i in 1:nrow(df_prototypes)){
   df_motives = df_ODiN[df_ODiN$agegroup==df_prototypes[i,]$agegroup & df_ODiN$gender==df_prototypes[i,]$gender & df_ODiN$migration_background==df_prototypes[i,]$migration_background,]
   df_motives = df_motives %>%
-    select(disp_id, disp_motive) %>%
+    select(disp_id, disp_destination) %>%
     distinct()
   
   df_motives <- df_motives %>%
-    group_by(disp_motive) %>%
+    group_by(disp_destination) %>%
     summarise(n = n())
   df_motives$prob <- df_motives$n / sum(df_motives$n)
   
@@ -96,4 +98,4 @@ for (i in 1:nrow(df_prototypes)){
 
 df_motive_probabilities <- merge(df_motive_probabilities, df_prototypes, by=c('prototype_ID'))
 
-write.csv(df_motive_probabilities, 'df_motive_probabilities.csv', row.names = FALSE)
+write.csv(df_motive_probabilities, '/processed/df_motive_probabilities.csv', row.names = FALSE)

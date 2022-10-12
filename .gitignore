@@ -3,4 +3,6 @@
 .DS_Store
 ._*
 /data/*
+/keys/*
 /plots/*
+/scrape_locations/data/*
