@@ -5,4 +5,4 @@
 /data/*
 /keys/*
 /plots/*
-/scrape_locations/data/*
+/locations/foursquare/data/*

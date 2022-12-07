@@ -147,15 +147,26 @@ library(tidyr)
 library(readr)
 library("this.path")
 
-setwd(paste0(this.path::this.dir(), "/data/Formatted"))
+setwd(this.path::this.dir())
+setwd('../data/processed')
 df_ODiN <- read_csv("df_DHZW.csv")
 
 # load DHZW area
-setwd(paste0(this.path::this.dir(), "/data"))
+setwd(this.path::this.dir())
+setwd("../data/codes")
 DHZW_PC4_codes <- read.csv("DHZW_PC4_codes.csv", sep = ";" ,header=F)$V1
 
 df_ODiN[!(df_ODiN$disp_start_PC4 %in% DHZW_PC4_codes),]$disp_start_PC4 = 'outside DHZW'
 df_ODiN[!(df_ODiN$disp_arrival_PC4 %in% DHZW_PC4_codes),]$disp_arrival_PC4 = 'outside DHZW'
+
+df_ODiN <- df_ODiN[df_ODiN$disp_destination=='to work',]
+df_ODiN <- df_ODiN %>%
+  select(agent_ID, disp_id, disp_start_PC4, disp_arrival_PC4, disp_modal_choice) %>%
+  distinct()
+
+df_ODiN_work_outside <- df_ODiN
+df_ODiN_work_outside <- df_ODiN_work_outside[df_ODiN_work_outside$disp_start_PC4 != 'outside DHZW',]
+df_ODiN_work_outside <- df_ODiN_work_outside[df_ODiN_work_outside$disp_arrival_PC4 == 'outside DHZW',]
 
 df_ODiN <- df_ODiN %>%
   select(disp_start_PC4, disp_arrival_PC4) %>%
@@ -165,7 +176,7 @@ df_ODiN <- df_ODiN %>%
 ggplot(df_ODiN, aes(disp_start_PC4, disp_arrival_PC4, fill= freq)) + 
   geom_tile()+
   scale_fill_distiller(palette = "Reds", direction = 1)+
-  ggtitle("Frequency heatmap of ODiN movements of DHZW")+
+  ggtitle("Frequency heatmap of 'to work' ODiN movements of DHZW inhabitants")+
   ylab("Arrival PC4")+
   xlab("Departure PC4")+
   labs(fill = "Frequency")+
@@ -175,3 +186,5 @@ ggplot(df_ODiN, aes(disp_start_PC4, disp_arrival_PC4, fill= freq)) +
         axis.text = element_text(size=15),
         axis.title = element_text(size=20),
         axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+
+

@@ -18,3 +18,5 @@ dhzw = df %>%
 
 dhzw = dhzw %>%
   select(PC6, geometry)
+
+st_write(dhzw, 'DHZW_PC6_shapefile.shp')
