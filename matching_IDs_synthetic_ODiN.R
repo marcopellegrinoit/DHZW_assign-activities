@@ -95,3 +95,5 @@ for (i in unique(df_ODiN$day_of_week)) {
   df_outcome <- merge(df_outcome, df_match)
 }
 
+setwd(paste0(this.path::this.dir(), "/data/processed"))
+write.csv(df_outcome, 'df_match_synthetic_ODiN_agents.csv', row.names = FALSE)

@@ -25,20 +25,15 @@ df_original$next_start_time <-
          df_original$next_start_time,
          1439)
 
-df_activities_all <- data.frame(matrix(ncol = 6, nrow = 0))
-colnames(df_activities_all) <-
-  c('ODiN_ID',
-    'activity_type',
-    'start_time',
-    'end_time',
-    'duration',
-    'activity_number')
-
 list_ODiN_activities <-
   c('collection/delivery of goods', 'hiking', 'transport is the job')
 
-for (ODiN_ID in unique(df_original$agent_ID)) {
-  #ODiN_ID <- 56114533936
+datalist = list()
+ODiN_IDs <- unique(df_original$agent_ID)
+
+for (n in 1:length(ODiN_IDs)) {
+  ODiN_ID <- ODiN_IDs[n]
+
   df <- data.frame(matrix(ncol = 4, nrow = 0))
   colnames(df) <-
     c('ODiN_ID',
@@ -153,9 +148,10 @@ for (ODiN_ID in unique(df_original$agent_ID)) {
   df$activity_number <- 1:nrow(df)
   df$day_of_week <- df_activities[1,]$day_of_week
   
-  df_activities_all <- rbind(df_activities_all, df)
-  
+  datalist[[n]] <- df
 }
+
+df_activities_all = do.call(rbind, datalist)
 
 # Save dataset
 setwd(paste0(this.path::this.dir(), "/data/processed"))
