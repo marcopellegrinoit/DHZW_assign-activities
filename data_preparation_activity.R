@@ -50,31 +50,51 @@ df <- home_municipality_to_PC4(df)
 df <- format_values(df)
 
 ################################################################################
-# Find PC4 in The Netherlands with the same urbanization index of DHZW
+If (TRUE) {
+  # Find PC4 in The Netherlands with the same urbanization index of DHZW
+  setwd(paste0(this.path::this.dir(), "/data/processed"))
+  df_urbanization_PC4 <-
+    read_delim("PC4_CBS_2019_urbanization_index.csv", delim = ';')
+  
+  setwd(paste0(this.path::this.dir(), "/data/codes"))
+  DHZW_PC4_codes <-
+    read.csv("DHZW_PC4_codes.csv", sep = ";" , header = F)$V1
+  
+  df_urbanization_PC4_DHZW = df_urbanization_PC4[df_urbanization_PC4$PC4 %in% DHZW_PC4_codes,]
+  # all the PC4 of DHZW are "Very highly urban" (environmental address density of 2 500 or more addresses/km2)
+  
+  # so, find all the PC4s in The Netherlands that have such STED index equals to 1
+  
+  PC4_urbanized_like_DHZW = df_urbanization_PC4[df_urbanization_PC4$STED ==
+                                                  1,]$PC4
+  
+  df <- df[df$hh_PC4 %in% PC4_urbanized_like_DHZW,]
+} else {
+  # Filter DHZW area only
+  setwd(paste0(this.path::this.dir(), "/data/codes"))
+  DHZW_PC4_codes <-
+    read.csv("DHZW_PC4_codes.csv", sep = ";" , header = F)$V1
+  
+  df <- df[df$hh_PC4 %in% DHZW_PC4_codes,]
+}
 
-setwd(paste0(this.path::this.dir(), "/data/processed"))
-df_urbanization_PC4 <-
-  read_delim("PC4_CBS_2019_urbanization_index.csv", delim = ';')
-
-setwd(paste0(this.path::this.dir(), "/data/codes"))
-DHZW_PC4_codes <-
-  read.csv("DHZW_PC4_codes.csv", sep = ";" , header = F)$V1
-
-df_urbanization_PC4_DHZW = df_urbanization_PC4[df_urbanization_PC4$PC4 %in% DHZW_PC4_codes, ]
-# all the PC4 of DHZW are "Very highly urban" (environmental address density of 2 500 or more addresses/km2)
-
-# so, find all the PC4s in The Netherlands that have such STED index equals to 1
-
-PC4_urbanized_like_DHZW = df_urbanization_PC4[df_urbanization_PC4$STED ==
-                                                1, ]$PC4
-
-df <- df[df$hh_PC4 %in% PC4_urbanized_like_DHZW, ]
 
 ################################################################################
 # Calculate departure time
 df$disp_start_time <- df$disp_start_hour * 60 + df$disp_start_min
-df$disp_arrival_time <- df$disp_arrival_hour * 60 + df$disp_arrival_min
-df <- subset(df, select=-c(year, disp_start_hour, disp_start_min, disp_arrival_hour, disp_arrival_min))
+df$disp_arrival_time <-
+  df$disp_arrival_hour * 60 + df$disp_arrival_min
+df <-
+  subset(
+    df,
+    select = -c(
+      year,
+      disp_start_hour,
+      disp_start_min,
+      disp_arrival_hour,
+      disp_arrival_min
+    )
+  )
 
 df$hh_position <- recode(
   df$hh_position,
@@ -95,10 +115,10 @@ IDs_to_delete = df[df$migration_background == 'unknown' |
                      df$hh_position == 'other household' |
                      is.na(df$disp_activity) |
                      is.na(df$disp_start_time) |
-                     is.na(df$disp_arrival_time),]
-df <- df[!(df$agent_ID %in% IDs_to_delete), ]
+                     is.na(df$disp_arrival_time), ]
+df <- df[!(df$agent_ID %in% IDs_to_delete),]
 
-df[df$hh_size >= 5,]$hh_size <- 5
+df[df$hh_size >= 5, ]$hh_size <- 5
 
 # Save dataset
 setwd(paste0(this.path::this.dir(), "/data/processed"))
