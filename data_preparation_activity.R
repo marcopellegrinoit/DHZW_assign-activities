@@ -7,6 +7,9 @@ library("this.path")
 setwd(this.path::this.dir())
 source('src/utils_activity_schedule.R')
 
+################################################################################
+# This script put together the various years of ODiN into a big collection
+
 # Load ODiNs and OViNs
 setwd(paste0(this.path::this.dir(), "/data/OViN and OViN"))
 

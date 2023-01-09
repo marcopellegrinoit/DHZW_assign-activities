@@ -5,6 +5,9 @@ library(this.path)
 setwd(this.dir())
 setwd('data/processed')
 
+################################################################################
+# This script merges together the schedule for each day for each synthetic participant
+
 # read the activity schedule for the ODiN participants
 df_schedule_ODiN <- read.csv('df_activity_schedule_all.csv')
 

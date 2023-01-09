@@ -6,6 +6,9 @@ library(purrr)
 library("this.path")
 
 ################################################################################
+# This script takes a collection of ODiN and returns activities for each participant (instead of trips)
+
+################################################################################
 # Transform ODiN into activities
 
 setwd(paste0(this.path::this.dir(), "/data/processed"))

@@ -5,6 +5,9 @@ library(tidyr)
 library(purrr)
 library("this.path")
 
+################################################################################
+# For each synthetic agent, a correspondent ODiN participant is assigned per each week day
+
 create_agegroups <- function (df) {
   df$agegroup = NA
   df <- df %>%
