@@ -15,7 +15,7 @@
 	 - Output: *df_synthetic_activities.csv*
 	 
 ## Analysis	 
- - [compare_activities_DHZW_pool](https://github.com/mr-marco/DHZW_assign-travel-behaviours/blob/main/analysis/compare_activities_DHZW_pool "ccompare_activities_DHZW_pool.R")
+ - [compare_activities_DHZW_pool](https://github.com/mr-marco/DHZW_assign-travel-behaviours/blob/main/analysis/compare_activities_DHZW_pool.R "ccompare_activities_DHZW_pool.R")
 	 - Returns a comparison in terms of activity types per day between the selected pool (highly urbanized PC4s and DHZW)
 	 
 	 
