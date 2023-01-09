@@ -21,6 +21,7 @@ filter_attributes_ODiN <- function(df) {
       Jaar,
       VertLoc,
       VertPC,
+      AankPC,
       VerplNr
     ) %>%
     rename(
@@ -40,6 +41,7 @@ filter_attributes_ODiN <- function(df) {
       year = Jaar,
       disp_start_home = VertLoc,
       disp_start_PC4 = VertPC,
+      disp_arrival_PC4 = AankPC,
       disp_counter = VerplNr
     ) %>%
     distinct()
@@ -70,6 +72,7 @@ filter_attributes_OViN <- function(df) {
       Jaar,
       Vertrekp,
       VertPC,
+      AankPC,
       VerplNr
     ) %>%
     rename(
@@ -89,6 +92,7 @@ filter_attributes_OViN <- function(df) {
       year = Jaar,
       disp_start_home = Vertrekp,
       disp_start_PC4 = VertPC,
+      disp_arrival_PC4 = AankPC,
       disp_counter = VerplNr
     ) %>%
     distinct()
@@ -155,7 +159,7 @@ home_municipality_to_PC4 <- function(df, df_PC4) {
     mutate(hh_PC4 = zoo::na.locf(hh_PC4, na.rm=FALSE))
   
   # Remove useless column
-  df <- subset(df, select=-c(disp_counter, disp_start_PC4))
+  df <- subset(df, select=-c(disp_counter))
   return(df)
 }
 
@@ -167,9 +171,15 @@ filter_start_day_from_home <- function (df) {
                  disp_counter==1))
   df <- filter(df, (agent_ID %in% unique(agents_home$agent_ID)))
   
-  
   # Filter agents starting the day from home
   df <- df[df$disp_start_home==1,]
+  
+  # Extract PC4 from first displacement
+  df$hh_PC4 <- NA
+  df[df$disp_counter==1,]$hh_PC4 <- df[df$disp_counter==1,]$disp_start_PC4
+  df <- df %>%
+    group_by(agent_ID) %>%
+    mutate(hh_PC4 = dplyr::first(hh_PC4))
   
   # Remove useless column
   df <- subset(df, select=-c(disp_start_home))

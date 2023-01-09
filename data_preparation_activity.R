@@ -1,4 +1,4 @@
-library(haven)
+library('haven')
 library("dplyr")
 library(tibble)
 library(tidyr)
@@ -53,7 +53,7 @@ df <- home_municipality_to_PC4(df)
 df <- format_values(df)
 
 ################################################################################
-If (TRUE) {
+if (TRUE) {
   # Find PC4 in The Netherlands with the same urbanization index of DHZW
   setwd(paste0(this.path::this.dir(), "/data/processed"))
   df_urbanization_PC4 <-

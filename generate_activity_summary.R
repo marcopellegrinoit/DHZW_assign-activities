@@ -12,7 +12,7 @@ library("this.path")
 # Transform ODiN into activities
 
 setwd(paste0(this.path::this.dir(), "/data/processed"))
-df_original <- read_csv("df_activity_trips_DHZW.csv")
+df_original <- read_csv("df_activity_trips.csv")
 
 df_original <- df_original[order(df_original$agent_ID),]
 
