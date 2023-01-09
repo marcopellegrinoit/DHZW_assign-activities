@@ -1,5 +1,6 @@
 # DHZW_assign-travel-behaviours
 
+## Data generation	 
  - [data_preparation_activity](https://github.com/mr-marco/DHZW_assign-travel-behaviours/blob/main/data_preparation_activity.R "data_preparation_activity.R")
 	 - Put together various years [2013-2019] of ODiN and OViN into a big collection
 	 - Output: *df_activity_trips.csv*
@@ -12,3 +13,9 @@
  - [combine_synthetic_ODiN_schedule](https://github.com/mr-marco/DHZW_assign-travel-behaviours/blob/main/combine_synthetic_ODiN_schedules.R "combine_synthetic_ODiN_schedules.R")
 	 - Returns the entire synthetic population activity schedule for an entire week
 	 - Output: *df_synthetic_activities.csv*
+	 
+## Analysis	 
+ - [compare_activities_DHZW_pool](https://github.com/mr-marco/DHZW_assign-travel-behaviours/blob/main/analysis/compare_activities_DHZW_pool "ccompare_activities_DHZW_pool.R")
+	 - Returns a comparison in terms of activity types per day between the selected pool (highly urbanized PC4s and DHZW)
+	 
+	 

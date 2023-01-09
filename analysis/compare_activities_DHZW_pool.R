@@ -3,6 +3,7 @@ library(dplyr)
 library(this.path)
 library(ggplot2)
 library(gridExtra)
+library(tidyr)
 
 setwd(this.dir())
 setwd('../data/processed')
