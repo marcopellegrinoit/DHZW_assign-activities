@@ -9,10 +9,10 @@ setwd('data/processed')
 # This script merges together the schedule for each day for each synthetic participant
 
 # read the activity schedule for the ODiN participants
-df_schedule_ODiN <- read.csv('df_activity_schedule_all.csv')
+df_schedule_ODiN <- read.csv('df_activity_schedule-higly_urbanized.csv')
 
 # read the ID mapping between synthetic agents and ODiN participants
-df_match_IDs <- read.csv('df_match_synthetic_ODiN_agents.csv')
+df_match_IDs <- read.csv('df_match_synthetic_ODiN_IDs.csv')
 
 # prepare an empty dataset
 datalist = list()

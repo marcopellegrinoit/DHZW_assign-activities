@@ -27,7 +27,7 @@ create_agegroups <- function (df) {
 # Assign prototypes to ODiN participants
 
 setwd(paste0(this.path::this.dir(), "/data/processed"))
-df_ODiN <- read_csv("df_activity_trips.csv")
+df_ODiN <- read_csv("df_trips-higly_urbanized.csv")
 df_ODiN <- create_agegroups(df_ODiN)
 
 # Select unique agents from ODiN and their demographics
@@ -53,9 +53,9 @@ df_ODiN <- df_ODiN %>%
 # Assign prototypes to synthetic agents
 
 setwd(this.path::this.dir())
-setwd('../DHZW_synthetic-population/output/synthetic-population-households')
+setwd('../DHZW_synthetic-population/output/synthetic-population-households/4_car_2022-12-26_15-50')
 
-df_synth_pop <- read_csv("synthetic_population_DHZW_2019_with_hh.csv")
+df_synth_pop <- read_csv("synthetic_population_DHZW_2019.csv")
 
 df_synth_pop <- create_agegroups(df_synth_pop)
 
@@ -72,14 +72,14 @@ df_synth_pop <- df_synth_pop %>%
 
 library(data.table)
 
+# For each synthetic agent, match a random ODiN participant with the same demographics
+
 setDT(df_ODiN)
 setDT(df_synth_pop)
 df_outcome <- df_synth_pop
 
 # For each day of the week
 for (i in unique(df_ODiN$day_of_week)) {
-
-#  i = 1
   df_ODiN_day <- df_ODiN[df_ODiN$day_of_week==i,]
   
   df_ODiN_day <- df_ODiN_day %>%
@@ -99,4 +99,4 @@ for (i in unique(df_ODiN$day_of_week)) {
 }
 
 setwd(paste0(this.path::this.dir(), "/data/processed"))
-write.csv(df_outcome, 'df_match_synthetic_ODiN_agents.csv', row.names = FALSE)
+write.csv(df_outcome, 'df_match_synthetic_ODiN_IDs.csv', row.names = FALSE)

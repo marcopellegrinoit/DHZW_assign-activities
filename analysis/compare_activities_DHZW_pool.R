@@ -8,8 +8,8 @@ library(tidyr)
 setwd(this.dir())
 setwd('../data/processed')
 
-df_DHZW <- read.csv('df_activity_schedule_DHZW.csv')
-df_pool <- read.csv('df_activity_schedule_all.csv')
+df_DHZW <- read.csv('df_activity_schedule-DHZW.csv')
+df_pool <- read.csv('df_activity_schedule-higly_urbanized.csv')
 df_synthetic <- read.csv('df_synthetic_activities.csv')
 
 length(unique(df_DHZW$ODiN_ID))
@@ -47,6 +47,7 @@ plot_all <- ggplot(df_comparison.activities_all, aes(activity, proportion)) +
            position = "dodge",
            stat = "identity",
            width=0.4) +
+  scale_y_continuous(limits=c(0,1))+
   ggtitle("Comparison of all the activities")
 plot_all
 
@@ -59,15 +60,15 @@ week <- c('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Sat
 for (i in c(1:7)) {
   df_DHZW.activities_day <- as.data.frame(table(df_DHZW[df_DHZW$day_of_week==i,]$activity_type))
   colnames(df_DHZW.activities_day) <- c('activity', 'frequency')
-  df_DHZW.activities_day$DHZW <- df_DHZW.activities_day$frequency/sum(df_DHZW.activities_day$frequency)
+  df_DHZW.activities_day$DHZW <- df_DHZW.activities_day$frequency/sum(df_DHZW.activities_all$frequency)
   
   df_pool.activities_day <- as.data.frame(table(df_pool[df_pool$day_of_week==i,]$activity_type))
   colnames(df_pool.activities_day) <- c('activity', 'frequency')
-  df_pool.activities_day$pool <- df_pool.activities_day$frequency/sum(df_pool.activities_day$frequency)
+  df_pool.activities_day$pool <- df_pool.activities_day$frequency/sum(df_pool.activities_all$frequency)
   
   df_synthetic.activities_day <- as.data.frame(table(df_synthetic[df_synthetic$day_of_week==i,]$activity_type))
   colnames(df_synthetic.activities_day) <- c('activity', 'frequency')
-  df_synthetic.activities_day$synthetic <- df_synthetic.activities_day$frequency/sum(df_synthetic.activities_day$frequency)
+  df_synthetic.activities_day$synthetic <- df_synthetic.activities_day$frequency/sum(df_synthetic.activities_all$frequency)
   
   df_comparison.activities_day <- merge(df_pool.activities_day, df_DHZW.activities_day, by='activity')
   df_comparison.activities_day <- merge(df_comparison.activities_day, df_synthetic.activities_day, by='activity')
@@ -85,6 +86,7 @@ for (i in c(1:7)) {
              position = "dodge",
              stat = "identity",
              width=0.4) +
+    scale_y_continuous(limits=c(0,.12))+
     ggtitle(paste0(week[i]))
   plot_day
   

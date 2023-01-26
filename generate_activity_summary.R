@@ -12,7 +12,7 @@ library("this.path")
 # Transform ODiN into activities
 
 setwd(paste0(this.path::this.dir(), "/data/processed"))
-df_original <- read_csv("df_activity_trips.csv")
+df_original <- read_csv("df_trips-higly_urbanized.csv")
 
 df_original <- df_original[order(df_original$agent_ID),]
 
@@ -36,85 +36,104 @@ ODiN_IDs <- unique(df_original$agent_ID)
 
 for (n in 1:length(ODiN_IDs)) {
   ODiN_ID <- ODiN_IDs[n]
-
-  df <- data.frame(matrix(ncol = 4, nrow = 0))
+  
+  df <- data.frame(matrix(ncol = 5, nrow = 0))
   colnames(df) <-
     c('ODiN_ID',
       'activity_type',
       'start_time',
-      'end_time')
+      'end_time',
+      'day_of_week')
   
   df_activities <- df_original[df_original$agent_ID == ODiN_ID,]
   
   counter <- 1
-  for (i in 1:nrow(df_activities)) {
-    # add starting activity being at home
-    if (counter == 1) {
-      df[counter, ] = c(ODiN_ID,
-                        'home',
-                        0,
-                        df_activities[1,]$disp_start_time)
-    }
+  
+  # if the agent stays at home all day, it has a record with NA value
+  if(is.na(df_activities[1,]$disp_activity)) {
+    df[counter, ] = c(ODiN_ID,
+                      'home',
+                      0,
+                      1439,
+                      df_activities[1,]$day_of_week)
+  } else {
+    # there is at least on trip
     
-    # add the trip activity
-    counter <- counter + 1
-    if (df_activities[i,]$disp_activity %in% list_ODiN_activities) {
-      df[counter, ] = c(
-        ODiN_ID,
-        df_activities[i,]$disp_activity,
-        df_activities[i,]$disp_start_time,
-        df_activities[i,]$disp_arrival_time
-      )
-    } else {
-      df[counter, ] = c(
-        ODiN_ID,
-        'trip',
-        df_activities[i,]$disp_start_time,
-        df_activities[i,]$disp_arrival_time
-      )
-    }
-    
-    #  Add the activity in the middle
-    counter <- counter + 1
-    if (df_activities[i,]$disp_activity %in% list_ODiN_activities) {
-      prev_activity <- df[counter - 2, ]$activity_type
-      df[counter, ] = c(
-        ODiN_ID,
-        prev_activity,
-        df_activities[i,]$disp_arrival_time,
-        df_activities[i,]$next_start_time
-      )
-    } else {
-      if (df_activities[i,]$disp_activity == 'to home') {
-        activity <- 'home'
-      } else if (df_activities[i,]$disp_activity == 'to work') {
-        activity <- 'work'
-      } else if (df_activities[i,]$disp_activity == 'visit/stay') {
-        activity <- 'visit/stay'
-      } else if (df_activities[i,]$disp_activity == 'shopping') {
-        activity <- 'shopping'
-      } else if (df_activities[i,]$disp_activity == 'other leisure activities') {
-        activity <- 'leisure'
-      } else if (df_activities[i,]$disp_activity == 'services/personal care') {
-        activity <- 'leisure'
-      } else if (df_activities[i,]$disp_activity == 'sports/hobby') {
-        activity <- 'sport'
-      } else if (df_activities[i,]$disp_activity == 'pick up / bring people') {
-        activity <- 'pick up / bring people'
-      } else if (df_activities[i,]$disp_activity == 'other') {
-        activity <- 'other'
-      } else if (df_activities[i,]$disp_activity == 'follow education') {
-        activity <- 'school'
-      } else if (df_activities[i,]$disp_activity == 'business visit') {
-        activity <- 'business visit'
+    for (i in 1:nrow(df_activities)) {
+      # add starting activity being at home
+      if (counter == 1) {
+        df[counter, ] = c(ODiN_ID,
+                          'home',
+                          0,
+                          df_activities[1,]$disp_start_time,
+                          df_activities[1,]$day_of_week)
       }
       
-      df[counter, ] = c(
-        ODiN_ID,
-        activity,
-        df_activities[i,]$disp_arrival_time,
-        df_activities[i,]$next_start_time
-      )
+      # add the trip activity
+      counter <- counter + 1
+      if (df_activities[i,]$disp_activity %in% list_ODiN_activities) {
+        df[counter, ] = c(
+          ODiN_ID,
+          df_activities[i,]$disp_activity,
+          df_activities[i,]$disp_start_time,
+          df_activities[i,]$disp_arrival_time,
+          df_activities[i,]$day_of_week
+        )
+      } else {
+        df[counter, ] = c(
+          ODiN_ID,
+          'trip',
+          df_activities[i,]$disp_start_time,
+          df_activities[i,]$disp_arrival_time,
+          df_activities[i,]$day_of_week
+        )
+      }
+      
+      #  Add the activity in the middle
+      counter <- counter + 1
+      if (df_activities[i,]$disp_activity %in% list_ODiN_activities) {
+        prev_activity <- df[counter - 2, ]$activity_type
+        df[counter, ] = c(
+          ODiN_ID,
+          prev_activity,
+          df_activities[i,]$disp_arrival_time,
+          df_activities[i,]$next_start_time,
+          df_activities[i,]$day_of_week
+        )
+      } else {
+        if (df_activities[i,]$disp_activity == 'to home') {
+          activity <- 'home'
+        } else if (df_activities[i,]$disp_activity == 'to work') {
+          activity <- 'work'
+        } else if (df_activities[i,]$disp_activity == 'visit/stay') {
+          activity <- 'visit/stay'
+        } else if (df_activities[i,]$disp_activity == 'shopping') {
+          activity <- 'shopping'
+        } else if (df_activities[i,]$disp_activity == 'other leisure activities') {
+          activity <- 'leisure'
+        } else if (df_activities[i,]$disp_activity == 'services/personal care') {
+          activity <- 'leisure'
+        } else if (df_activities[i,]$disp_activity == 'sports/hobby') {
+          activity <- 'sport'
+        } else if (df_activities[i,]$disp_activity == 'pick up / bring people') {
+          activity <- 'pick up / bring people'
+        } else if (df_activities[i,]$disp_activity == 'other') {
+          activity <- 'other'
+        } else if (df_activities[i,]$disp_activity == 'follow education') {
+          activity <- 'school'
+        } else if (df_activities[i,]$disp_activity == 'business visit') {
+          activity <- 'business visit'
+        }
+        
+        df[counter, ] = c(
+          ODiN_ID,
+          activity,
+          df_activities[i,]$disp_arrival_time,
+          df_activities[i,]$next_start_time,
+          df_activities[i,]$day_of_week
+        )
+      }
+      
     }
     
   }
@@ -126,7 +145,7 @@ for (n in 1:length(ODiN_IDs)) {
         activity_type == 'work' |
         activity_type == 'shopping' |
         activity_type == 'sport' |
-        activity_type == 'school'
+        (activity_type=='school' & !(day_of_week==1 | day_of_week==7)) # school activities only during the week.
     )
   
   # merge together consequential activities of the same type
@@ -149,8 +168,7 @@ for (n in 1:length(ODiN_IDs)) {
   # add duration and activity number
   df$duration <- as.numeric(df$end_time) - as.numeric(df$start_time)
   df$activity_number <- 1:nrow(df)
-  df$day_of_week <- df_activities[1,]$day_of_week
-  
+
   datalist[[n]] <- df
 }
 
@@ -158,4 +176,4 @@ df_activities_all = do.call(rbind, datalist)
 
 # Save dataset
 setwd(paste0(this.path::this.dir(), "/data/processed"))
-write.csv(df_activities_all, 'df_activity_schedule_DHZW.csv', row.names = FALSE)
+write.csv(df_activities_all, 'df_activity_schedule-higly_urbanized.csv', row.names = FALSE)
