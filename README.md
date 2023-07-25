@@ -31,18 +31,10 @@ OViN surveys from 2010 to 2017 and ODiN surveys from 2018 and 2019. Centraal Bur
 
 ## Data Usage (in order)
 
-1.   [`data_preparation.R`](data_preparation.R)
-    *   The script aggregates the survey years and filters the trips of residents of highly urbanised postcodes.
-    *   Output: `df_trips-higly_urbanized.csv`
-2.   [`convert_trips_into_activities.R`](convert_trips_into_activities.R)
-    *   The script transforms the trip collection into activities for each individual.
-    *   Output: `df_activity_schedule-higly_urbanized.csv`
-3.   [`matching_IDs_synthetic_ODiN.R`](matching_IDs_synthetic_ODiN.R)
-    *   The script assigns each agent of a synthetic population to a demographically matching ODiN participant. The assignment is repeated each weekday to form a weekly schedule. The output is a dataframe that contains the ID of the matched participants.
-    *   Output: `df_match_synthetic_ODiN_IDs.csv`
-4.   [`combine_synthetic_ODiN_schedules.R`](combine_synthetic_ODiN_schedules.R)
-    *   The script returns the full synthetic population activity weekly schedule
-    *   Output: `df_synthetic_activities.csv`
+1.   [`data_preparation.R`](data_preparation.R). The script aggregates the survey years and filters the trips of residents of highly urbanised postcodes. Output: `df_trips-higly_urbanized.csv`
+2.   [`convert_trips_into_activities.R`](convert_trips_into_activities.R). The script transforms the trip collection into activities for each individual. Output: `df_activity_schedule-higly_urbanized.csv`
+3.   [`matching_IDs_synthetic_ODiN.R`](matching_IDs_synthetic_ODiN.R). The script assigns each agent of a synthetic population to a demographically matching ODiN participant. The assignment is repeated each weekday to form a weekly schedule. The output is a dataframe that contains the ID of the matched participants. Output: `df_match_synthetic_ODiN_IDs.csv`
+4.   [`combine_synthetic_ODiN_schedules.R`](combine_synthetic_ODiN_schedules.R). The script returns the full synthetic population activity weekly schedule. Output: `df_synthetic_activities.csv`
 
 ## Analysis
 
