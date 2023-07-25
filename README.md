@@ -1,6 +1,6 @@
 ![GitHub](https://img.shields.io/badge/license-GPL--3.0-blue)
 
-## Extracting and Assigning Activity Schedules to Individuals
+# Extracting and Assigning Activity Schedules to Individuals
 
 **Utrecht University, The Netherlands. 2022 - 2023**
 
