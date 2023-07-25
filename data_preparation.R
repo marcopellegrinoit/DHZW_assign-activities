@@ -43,13 +43,17 @@ df_ODiN <- rbind(ODiN2018,
 
 # Filter individuals that live in a PC4 with the same DHZW urbanization index.
 
-# Find PC4 in The Netherlands with the same urbanization index of DHZW
-setwd(paste0(this.path::this.dir(), "/data/codes"))
+# Find PC4 in The Netherlands with the same urbanization index of DHZW. STED is the index and 1 is the highest
+# Extracted from: https://www.cbs.nl/nl-nl/dossier/nederland-regionaal/geografische-data/gegevens-per-postcode
+
+setwd(this.dir())
+setwd("../DHZW_shapefiles/data/codes")
 df_urbanization_PC4 <-
   read_delim("PC4_CBS_2019_urbanization_index.csv", delim = ';')
 
 # Read list of all PC4 in the Netherlands and their urbanization indexes.
-setwd(paste0(this.path::this.dir(), "/data/codes"))
+setwd(this.dir())
+setwd("../DHZW_shapefiles/data/codes")
 DHZW_PC4_codes <-
   read.csv("DHZW_PC4_codes.csv", sep = ";" , header = F)$V1
 
@@ -100,16 +104,6 @@ df[is.na(df$disp_counter),]$disp_counter <- 0
 df <- format_values(df)
 
 ################################################################################
-
-# Filter individuals that live in DHZW
-
-#   setwd(paste0(this.path::this.dir(), "/data/codes"))
-#   DHZW_PC4_codes <-
-#     read.csv("DHZW_PC4_codes.csv", sep = ";" , header = F)$V1
-#   
-#   df <- df[df$hh_PC4 %in% DHZW_PC4_codes,]
-
-################################################################################
 # Calculate times
 
 df$disp_start_time <- df$disp_start_hour * 60 + df$disp_start_min
@@ -143,6 +137,7 @@ unique(df$day_of_week)
 IDs_to_delete = df[(is.na(df$disp_activity) | is.na(df$disp_start_time) | is.na(df$disp_arrival_time)) & df$disp_counter > 0,]$agent_ID
 df <- df[!(df$agent_ID %in% IDs_to_delete),]
 
+# just check some figures
 nrow(df[is.na(df$disp_activity),])
 nrow(df[is.na(df$disp_start_time),])
 nrow(df[is.na(df$disp_arrival_time),])

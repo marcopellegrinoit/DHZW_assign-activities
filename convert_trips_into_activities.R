@@ -12,13 +12,20 @@ library("this.path")
 # Transform ODiN into activities
 
 setwd(paste0(this.path::this.dir(), "/data/processed"))
-df_original <- read_csv("df_trips-higly_urbanized.csv")
+df_original <- read_csv("df_trips-highly_urbanised.csv")
 
 df_original <- df_original[order(df_original$agent_ID),]
 
 df_original <- df_original %>%
   select(agent_ID, disp_activity, disp_start_time, disp_arrival_time, day_of_week)
 
+# 17748097
+
+# Transform minutes into seconds
+df_original$disp_start_time <- df_original$disp_start_time * 60
+df_original$disp_arrival_time <- df_original$disp_arrival_time * 60
+
+# For each trip add the start time of the next trip
 df_original <-
   transform(df_original, next_start_time = c(disp_start_time[-1], NA))
 df_original <-
@@ -26,7 +33,7 @@ df_original <-
 df_original$next_start_time <-
   ifelse(df_original$nxt_ID == df_original$agent_ID,
          df_original$next_start_time,
-         1439)
+         86399)
 
 list_ODiN_activities <-
   c('collection/delivery of goods', 'hiking', 'transport is the job')
@@ -42,49 +49,41 @@ for (n in 1:length(ODiN_IDs)) {
     c('ODiN_ID',
       'activity_type',
       'start_time',
-      'end_time',
       'day_of_week')
   
   df_activities <- df_original[df_original$agent_ID == ODiN_ID,]
   
+  # Counter for the synthetic activities
   counter <- 1
   
+  # Add the home activity
+  df[counter, ] = c(ODiN_ID,
+                    'home',
+                    0,
+                    df_activities[1,]$day_of_week)
+  
   # if the agent stays at home all day, it has a record with NA value
-  if(is.na(df_activities[1,]$disp_activity)) {
-    df[counter, ] = c(ODiN_ID,
-                      'home',
-                      0,
-                      1439,
-                      df_activities[1,]$day_of_week)
-  } else {
-    # there is at least on trip
+  if(!is.na(df_activities[1,]$disp_activity)) {
+    # there is at least one trip
     
     for (i in 1:nrow(df_activities)) {
-      # add starting activity being at home
-      if (counter == 1) {
-        df[counter, ] = c(ODiN_ID,
-                          'home',
-                          0,
-                          df_activities[1,]$disp_start_time,
-                          df_activities[1,]$day_of_week)
-      }
-      
       # add the trip activity
-      counter <- counter + 1
-      if (df_activities[i,]$disp_activity %in% list_ODiN_activities) {
+  
+      if (df_activities[i,]$disp_activity %in% list_ODiN_activities &
+          df_activities[i,]$disp_start_time < 86400 ) {
+        counter <- counter + 1
         df[counter, ] = c(
           ODiN_ID,
           df_activities[i,]$disp_activity,
           df_activities[i,]$disp_start_time,
-          df_activities[i,]$disp_arrival_time,
           df_activities[i,]$day_of_week
         )
       } else {
+        counter <- counter + 1
         df[counter, ] = c(
           ODiN_ID,
           'trip',
           df_activities[i,]$disp_start_time,
-          df_activities[i,]$disp_arrival_time,
           df_activities[i,]$day_of_week
         )
       }
@@ -97,7 +96,6 @@ for (n in 1:length(ODiN_IDs)) {
           ODiN_ID,
           prev_activity,
           df_activities[i,]$disp_arrival_time,
-          df_activities[i,]$next_start_time,
           df_activities[i,]$day_of_week
         )
       } else {
@@ -125,13 +123,16 @@ for (n in 1:length(ODiN_IDs)) {
           activity <- 'business visit'
         }
         
-        df[counter, ] = c(
-          ODiN_ID,
-          activity,
-          df_activities[i,]$disp_arrival_time,
-          df_activities[i,]$next_start_time,
-          df_activities[i,]$day_of_week
-        )
+        # if the trip ends after midnight, I drop the following activity
+        if (df_activities[i,]$disp_arrival_time <= 86400) {
+          df[counter, ] = c(
+            ODiN_ID,
+            activity,
+            df_activities[i,]$disp_arrival_time,
+            df_activities[i,]$day_of_week
+          )
+        }
+
       }
       
     }
@@ -163,7 +164,7 @@ for (n in 1:length(ODiN_IDs)) {
   df = subset(df, select = -c(remove))
   
   # make sure that the last activity goes till the end of the day
-  df[nrow(df), ]$end_time <- 1439
+  df[nrow(df), ]$end_time <- 86400
   
   # add duration and activity number
   df$duration <- as.numeric(df$end_time) - as.numeric(df$start_time)

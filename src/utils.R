@@ -23,7 +23,8 @@ filter_attributes_ODiN <- function(df) {
       VertLoc,
       VertPC,
       AankPC,
-      VerplNr
+      VerplNr,
+      Hvm
     ) %>%
     rename(
       agent_ID = OPID,
@@ -44,9 +45,38 @@ filter_attributes_ODiN <- function(df) {
       disp_start_home = VertLoc,
       disp_start_PC4 = VertPC,
       disp_arrival_PC4 = AankPC,
-      disp_counter = VerplNr
+      disp_counter = VerplNr,
+      disp_modal_choice = Hvm
     ) %>%
     distinct()
+  
+  df$disp_modal_choice <- recode(
+    df$disp_modal_choice,
+    '1' = 'car',
+    '2' = 'train',
+    '3' = 'bus_tram',
+    '4' = 'bus_tram',
+    '5' = 'other',
+    '6' = 'other',
+    '7' = 'other',
+    '8' = 'bike',
+    '9' = 'walk',
+    '10' =	'bus_tram',
+    '11' =	'other',
+    '12' =	'other',
+    '13' =	'other',
+    '14' =	'other',
+    '15' =	'other',
+    '16' =	'other',
+    '17' =	'other',
+    '18' =	'other',
+    '19' =	'other',
+    '20' =	'other',
+    '21' =	'other',
+    '22' =	'other',
+    '24' =	'other',
+    '24' =	'other'
+  )
   
   return(df)
 }
@@ -76,7 +106,8 @@ filter_attributes_OViN <- function(df) {
       VertPC,
       AankPC,
       VerplNr,
-      Sted
+      Sted,
+      Hvm
     ) %>%
     rename(
       agent_ID = OPID,
@@ -97,10 +128,39 @@ filter_attributes_OViN <- function(df) {
       disp_start_PC4 = VertPC,
       disp_arrival_PC4 = AankPC,
       disp_counter = VerplNr,
-      municipality_urbanization = Sted
+      municipality_urbanization = Sted,
+      disp_modal_choice = Hvm
     ) %>%
     distinct()
   
+  df$disp_modal_choice <- recode(
+    df$disp_modal_choice,
+    '1' = 'train',
+    '2' = 'other',
+    '3' = 'other',
+    '4' = 'bus_tram',
+    '5' = 'bus_tram',
+    '6' = 'car',
+    '7' = 'other',
+    '8' = 'other',
+    '9' = 'other',
+    '10' =	'car',
+    '11' =	'other',
+    '12' =	'other',
+    '13' =	'other',
+    '14' =	'other',
+    '15' =	'bike',
+    '16' =	'other',
+    '17' =	'other',
+    '18' =	'other',
+    '19' =	'other',
+    '20' =	'other',
+    '21' =	'other',
+    '22' =	'walk',
+    '24' =	'other',
+    '24' =	'other'
+    )
+    
   return(df)
 }
 
@@ -163,8 +223,6 @@ format_values <- function(df){
     '13' =	'services/personal care',
     '14' =	'other'
   )
-  
-  #df[df$hh_size >= 5, ]$hh_size <- 5
   
   return(df)
 }
