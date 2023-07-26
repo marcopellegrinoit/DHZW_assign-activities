@@ -53,7 +53,7 @@ df_ODiN <- df_ODiN %>%
 # Assign prototypes to synthetic agents
 
 setwd(this.path::this.dir())
-setwd('../DHZW_synthetic-population/output/synthetic-population-households/4_car_2022-12-26_15-50')
+setwd('../DHZW_synthetic-population/output/synthetic-population-households/')
 
 df_synth_pop <- read_csv("synthetic_population_DHZW_2019.csv")
 
