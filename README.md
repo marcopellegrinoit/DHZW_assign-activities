@@ -42,7 +42,7 @@ To generate the activity schedule of trips of DHZW residents, it is necessary to
 
 ## Contributors
 
-This project was made possible thanks to the hard work and contributions from the following individuals:
+This project was made possible thanks to the hard work and contributions from:
 
 *   Marco Pellegrino (Author)
 *   Jan de Mooij
