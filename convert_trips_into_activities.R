@@ -19,8 +19,6 @@ df_original <- df_original[order(df_original$agent_ID),]
 df_original <- df_original %>%
   select(agent_ID, disp_activity, disp_start_time, disp_arrival_time, day_of_week)
 
-# 17748097
-
 # Transform minutes into seconds
 df_original$disp_start_time <- df_original$disp_start_time * 60
 df_original$disp_arrival_time <- df_original$disp_arrival_time * 60
@@ -33,8 +31,9 @@ df_original <-
 df_original$next_start_time <-
   ifelse(df_original$nxt_ID == df_original$agent_ID,
          df_original$next_start_time,
-         86399)
+         86399) # midnight
 
+# activities where the trips is actually the activity
 list_ODiN_activities <-
   c('collection/delivery of goods', 'hiking', 'transport is the job')
 
@@ -71,6 +70,7 @@ for (n in 1:length(ODiN_IDs)) {
   
       if (df_activities[i,]$disp_activity %in% list_ODiN_activities &
           df_activities[i,]$disp_start_time < 86400 ) {
+        # if the trip the activity itself
         counter <- counter + 1
         df[counter, ] = c(
           ODiN_ID,
@@ -79,6 +79,7 @@ for (n in 1:length(ODiN_IDs)) {
           df_activities[i,]$day_of_week
         )
       } else {
+        # if the activity is the destination of the trip
         counter <- counter + 1
         df[counter, ] = c(
           ODiN_ID,

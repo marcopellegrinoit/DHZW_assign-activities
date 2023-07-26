@@ -92,7 +92,7 @@ for (i in unique(df_ODiN$day_of_week)) {
   df_match$agent_ID <- df_synth_pop$agent_ID
   
   df_match <- as.data.frame(df_match)
-  df_match[paste0('ODiN_ID_', i)] <- df_match['ODiN_ID']
+  df_match[paste0('ODiN_ID_', i)] <- df_match['ODiN_ID']  # add agent ID
   df_match = subset(df_match, select = -c(ODiN_ID))
   
   df_outcome <- merge(df_outcome, df_match)

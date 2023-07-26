@@ -28,12 +28,14 @@ CBS. Degree of urbanisation. 2023. url: [https://www.cbs.nl/en-gb/our-services/m
 
 1.  [`data_preparation.R`](data_preparation.R). The script aggregates the survey years and filters the trips of residents of highly urbanised postcodes. Output: `df_trips-higly_urbanized.csv`
 2.  [`convert_trips_into_activities.R`](convert_trips_into_activities.R). The script transforms the trip collection into activities for each individual. Output: `df_activity_schedule-higly_urbanized.csv`
-3.  [`matching_IDs_synthetic_ODiN.R`](matching_IDs_synthetic_ODiN.R). The script assigns each agent of a synthetic population to a demographically matching ODiN participant. The assignment is repeated each weekday to form a weekly schedule. The output is a dataframe that contains the ID of the matched participants. Output: `df_match_synthetic_ODiN_IDs.csv`
-4.  [`combine_synthetic_ODiN_schedules.R`](combine_synthetic_ODiN_schedules.R). The script returns the full synthetic population activity weekly schedule. Output: `df_synthetic_activities.csv`
+3.  [`match_IDs_synthetic_ODiN.R`](match_IDs_synthetic_ODiN.R). The script assigns each agent of a synthetic population to a demographically matching ODiN participant. The assignment is repeated each weekday to form a weekly schedule. The output is a dataframe that contains the ID of the matched participants. Output: `df_match_synthetic_ODiN_IDs.csv`
+4.  [`merge_synthetic_ODiN_schedules.R`](merge_synthetic_ODiN_schedules.R). The script returns the full synthetic population activity weekly schedule. Output: `df_synthetic_activities.csv`
 
 ## Analysis
 
 [`analysis/activity_distribution_plots.R`](analysis/activity_distribution_plots.R). The script returns the activity type distribution per week and per weekday. Distributions plotted: observed data (ODiN and OViN) of DHZW and highly urbanised postcodes together with the generated data.
+
+To generate the activity schedule of trips of DHZW residents, it is necessary to modifying the individuals filtering in [`data_preparation.R`](data_preparation.R).
 
 ## Data sources
 
